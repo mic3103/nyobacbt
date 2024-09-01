@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MARSUD CBT</title>
+    <link rel="icon" type="image/x-icon" href="https://i.postimg.cc/prBX2XnP/download-1-removebg-preview.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #efebf7;
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: #49c0f7;
+            width: 100%;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header img {
+            max-height: 40px;
+            margin-left: 20px;
+        }
+
+        #timer {
+            color: white;
+            font-size: 30px;
+            font-weight: bold;
+            margin-right: 20px;
+        }
+
+        .formulir {
+            width: 100%;
+            height: 85vh;
+            margin-top: 10px;
+        }
+
+        iframe {
+            height: 100%;
+            width: 100%;
+            border: 0;
+        }
+
+        #video-webcam {
+            width: 100px;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            border: 4px solid #326091;
+        }
+
+        #alert-box {
+            display: none;
+            background-color: #f44336;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            width: 100%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="./img/logo SMA.png" alt="Logo">
+        <div id="timer">
+            <span id="time">00:00</span>
+        </div>
+    </div>
+
+    <div class="formulir">
+        <iframe id="form" src="https://docs.google.com/forms/d/e/1FAIpQLSemoFZWI_13gezkra-d5R5_ukTuPau62I9tUouN9MIqZ09Nqw/viewform?usp=sf_link">LOADING</iframe>
+    </div>
+
+    <div>
+        <video autoplay="true" id="video-webcam">
+            Upgrade Browser Terbaru!
+        </video>
+    </div>
+
+    <div id="alert-box">Waktu habis! Anda diberi tambahan waktu 1 menit.</div>
+
+    <script>
+        function startTimer(duration, display, isAdditionalTime) {
+            var timer = duration, minutes, seconds;
+
+            // Load start time and additional time status from localStorage
+            var startTime = localStorage.getItem('startTime');
+            var additionalTime = localStorage.getItem('additionalTime') === 'true';
+
+            if (startTime) {
+                var elapsedTime = Math.floor((new Date().getTime() - startTime) / 1000);
+                timer = duration - elapsedTime;
+
+                if (timer <= 0 && !isAdditionalTime && !additionalTime) {
+                    // Show alert and start additional time
+                    document.getElementById('alert-box').style.display = 'block';
+                    setTimeout(function () {
+                        document.getElementById('alert-box').style.display = 'none';
+                    }, 3000);
+
+                    localStorage.setItem('additionalTime', 'true');
+                    startTime = new Date().getTime();
+                    localStorage.setItem('startTime', startTime);
+                    startTimer(60, display, true); // 1 minute additional time
+                    return;
+                } else if (timer <= 0 && additionalTime) {
+                    timer = 0;
+                    document.getElementById("form").style.visibility = "hidden";
+                    document.getElementById("timer").style.visibility = "hidden";
+                    localStorage.removeItem('startTime');
+                    localStorage.removeItem('additionalTime');
+                    window.location.href = "selesai.html"; // Redirect to selesai.html
+                    return;
+                }
+            } else {
+                // Save start time to localStorage
+                localStorage.setItem('startTime', new Date().getTime());
+            }
+
+            var interval = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    clearInterval(interval);
+                    if (!isAdditionalTime && !additionalTime) {
+                        // Show alert and start additional time
+                        document.getElementById('alert-box').style.display = 'block';
+                        setTimeout(function () {
+                            document.getElementById('alert-box').style.display = 'none';
+                        }, 3000);
+
+                        localStorage.setItem('additionalTime', 'true');
+                        localStorage.setItem('startTime', new Date().getTime());
+                        startTimer(60, display, true); // 1 minute additional time
+                    } else {
+                        document.getElementById("form").style.visibility = "hidden";
+                        document.getElementById("timer").style.visibility = "hidden";
+                        localStorage.removeItem('startTime');
+                        localStorage.removeItem('additionalTime');
+                        window.location.href = "selesai.html"; // Redirect to selesai.html
+                    }
+                }
+            }, 1000);
+        }
+
+        window.onload = function () {
+            var waktuUjian = 60 * 1, // Set timer duration here (in seconds)
+                display = document.querySelector('#time');
+            startTimer(waktuUjian, display, false);
+        };
+
+        // Webcam setup
+        var video = document.querySelector("#video-webcam");
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+
+        if (navigator.getUserMedia) {
+            navigator.getUserMedia({ video: true }, function (stream) {
+                video.srcObject = stream;
+            }, function (error) {
+                alert("Izinkan menggunakan webcam!");
+            });
+        }
+
+    </script>
+
+</body>
+</html>
