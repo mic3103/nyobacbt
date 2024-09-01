@@ -13,20 +13,27 @@
     <div class="login">
         <img style="height: 70px; padding-top: 20px;" src="./img/logo SMA.png" alt="">
         <h1>Marsudirini Buitenzorg CBT System</h1>
-        <h2>Silahkan pilih kelas anda!</h2>
-        <div class="tombolkls">
-            <a href="./klsxsblmts.html" class="kelas">
-                Kelas X
-            </a>
-            <a href="" class="kelas">
-                Kelas XI
-            </a>
-            <a href="" class="kelas">
-                Kelas XII
-            </a>
-        </div>
+        <h2>Terima kasih telah mengikuti Ujian dengan baik dan jujur.</h2>
+        <h2>Anda akan kembali ke halaman utama secara otomatis dalam <span id="timer">5</span> detik.</h2>
         <h5 style="padding-bottom: 30px; padding-top: 50px;">&copy;2024 Michael S Dev, All right reserved.</h5>
-       
     </div>
+
+    <script>
+        // Timer countdown
+        var countdown = 5;
+        var timerElement = document.getElementById('timer');
+
+        function updateTimer() {
+            countdown--;
+            timerElement.textContent = countdown;
+
+            if (countdown <= 0) {
+                clearInterval(timerInterval);
+                window.location.href = "index.html"; // Redirect to index.html
+            }
+        }
+
+        var timerInterval = setInterval(updateTimer, 1000);
+    </script>
 </body>
 </html>
